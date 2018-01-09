@@ -1,0 +1,17 @@
+NAME: Arpit Jasapara
+EMAIL: ajasapara@ucla.edu
+ID: XXXXXXXXX
+
+Included Files:
+	1. lab1a.c - Contains the source code for setting up a character-at-a-time, full duplex terminal I/O,
+				 forking/creating a shell child process, passing input and output between two processes, 
+				 shutdown processing, and error checking for all system calls.
+	2. Makefile - make (default) compiles the source code into an executable called lab1a, 
+				  make clean removes all files created by the Makefile, 
+				  and make dist zips up the necessary files into a tar.gz.
+	3. README - This file containing the project description.
+
+For this project, I heavily referenced the Linux manual on man7.org for the various functions/commands that 
+were specified in the spec. I also used gnu.org to better understand its utilities, especially how to do 
+noncanonical input (URL given below):
+https://www.gnu.org/software/libc/manual/html_node/Noncanon-Example.html#Noncanon-Example
