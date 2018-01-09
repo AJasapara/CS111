@@ -1,0 +1,19 @@
+NAME: Arpit Jasapara
+EMAIL: ajasapara@ucla.edu
+ID: XXXXXXXXX
+
+Included Files:
+	1. lab1b-client.c - 	Contains the source code for setting up a character-at-a-time, full duplex terminal I/O,
+				 			that communicates through sockets to a server.
+	2. lab1b-server.c - 	Contains the source code for setting up a server that receives input through sockets from a client, 
+							pipes it to a shell forked from the server, receives the output from the shell, and sends the output 
+							across the socket back to the client.
+	3. Makefile - 			make (default) compiles the source codes into executables called lab1b-client and lab1b-server,
+							make client compiles lab1b-client.c into the executable lab1b-client, make server compiles
+							lab1b-server.c into the executable lab1b-server,make clean removes all files created by the Makefile, 
+				  			and make dist zips up the necessary files into a tar.gz.
+	4. README - 			This file containing the project description.
+	5. my.key - 			Contains a key used for encrypted communication.
+
+For this project, I heavily referenced the Linux manual on man7.org for the various functions/commands that 
+were specified in the spec.
