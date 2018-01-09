@@ -1,0 +1,28 @@
+NAME: Arpit Jasapara
+EMAIL: ajasapara@ucla.edu
+ID: XXXXXXXXX
+
+Included Files:
+	1. lab0.c - Contains source code in C for reading from standard input and writing to standard output.
+				Performs file redirection, accepts input/output options, and catches segmentation faults.
+	2. Makefile - make (default) compiles the source code into an executable called lab0, make check runs 
+				  basic smoke tests on the executable, make clean removes all files created by the Makefile, 
+				  and make dist zips up the necessary files into a tar.gz.
+	3. backtrace.png - Screenshot of a segfault and the associated stack backtrace.
+	4. breakpoint.png - Screenshot of a breakpoint before a segfault, analysis of the null pointer, and the 
+						proceeding segfault.
+	5. README - This file containing the project description.
+
+Smoke-Test Cases:
+	1. The first test checks that the program successfully accepted input and output files, and exited with a 
+		status code of 0.
+	2. The second test checks that the input and output files are identical, ensuring that the program copied 
+		the standard input to standard output as it was supposed to.
+	3. The third test checks that the program exits with a status code of 1 upon receiving an incorrect argument.
+	4. The fourth test checks that the program exits with a status code of 2 if the input file cannot be opened.
+	5. The fifth test checks that the program exits with a status code of 3 if the output file cannot be opened.
+	6. The sixth test checks that the program exits with a status code of 4 if a segmentation fault is caught.
+
+For this project, I heavily referenced the Linux manual on man7.org for the various functions/commands. I also 
+used gnu.org to better understand its utilities, primarily signal handling (URL given below):
+https://www.gnu.org/software/libc/manual/html_node/Basic-Signal-Handling.html
