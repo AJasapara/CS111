@@ -1,0 +1,104 @@
+NAME: Arpit Jasapara
+EMAIL: ajasapara@ucla.edu
+ID: XXXXXXXXX
+
+Included Files:
+	1. README 			- this file containing descriptions of each of the included files and brief answers to each of the questions.
+	2. Makefile 		- has build (default) option to build source modules, tests option to run over 200 tests, graphs option to graph 
+						the data, dist option to create the tarball, and clean to delete all programs and output created by the Makefile
+	3. lab2_add.c 		- a C program that implements and tests a shared variable add function, implements the specified command line options, 
+						and produces the specified output statistics.
+	4. SortedList.h 	- a header file describing the interfaces for linked list operations.
+	5. SortedList.c 	- a C module that implements insert, delete, lookup, and length methods for a sorted doubly linked list
+	6. lab2_list.c 		- a C program that implements the specified command line options and produces the specified output statistics
+	7. lab2_add.csv 	- contains all of my results for all of the Part-1 tests
+	8. lab2_list.csv 	- contains all of my results for all of the Part-2 tests
+	9. lab2_add-1.png 	- graph that shows threads and iterations required to generate a failure (with and without yields)
+	10. lab2_add-2.png 	- graph that shows average time per operation with and without yields.
+	11. lab2_add-3.png 	- graph that shows average time per (single threaded) operation vs. the number of iterations.
+	12. lab2_add-4.png 	- graph that shows threads and iterations that can run successfully with yields under each of the synchronization options.
+	13. lab2_add-5.png 	- graph that shows average time per (protected) operation vs. the number of threads.
+	14. lab2_list-1.png - graph that shows average time per (single threaded) unprotected operation vs. number of iterations (illustrating the correction of
+						the per-operation cost for the list length).
+	15. lab2_list-2.png - graph that shows threads and iterations required to generate a failure (with and without yields).
+	16. lab2_list-3.png - graph that shows iterations that can run (protected) without failure.
+	17. lab2_list-4.png - graph that shows (length-adjusted) cost per operation vs the number of threads for the various synchronization options.
+	18. lab2_add.gp 	- generates the necessary Part-1 graphs from the csv records
+	19. lab2_list.gp 	- generates the necessary Part-2 graphs from the csv records
+
+
+
+QUESTION 2.1.1 - causing conflicts:
+Why does it take many iterations before errors are seen?
+This is because as the number of iterations increases, the chance of race conditions increases where there may be collisions in the critical section. 
+
+Why does a significantly smaller number of iterations so seldom fail?
+With smaller numbers of iterations, threads can finish their work faster than new threads are being created. The thread can finish before a context switch 
+even happens so there is very little chance of race conditions.
+
+
+
+QUESTION 2.1.2 - cost of yielding:
+Why are the --yield runs so much slower?
+The yield options means that threads are interrupted and forced to yield the CPU. Thus, extra context switches have to occur, resulting in additional 
+overhead and a much slower run-time.
+
+Where is the additional time going?
+The extra time is going to the context switches, where registers and the threads' entire states are saved. Then the next thread has to be loaded, and 
+executed, adding to the overall time.
+
+Is it possible to get valid per-operation timings if we are using the --yield option?
+If so, explain how. If not, explain why not.
+No, because the context switches are adding extra overhead throughout the program. We are only collecting the total time, so we won't be able to get 
+valid timings. It would be very difficult or impossible to separate the yielding times from the operation timings since they are so intermingled.
+
+
+
+QUESTION 2.1.3 - measurement errors:
+Why does the average cost per operation drop with increasing iterations?
+As the number of iterations increase, the initial cost of creating the thread is amortized. This initial thread creation time thus disappears 
+as the time to run the iterations dominates the overall time.s
+
+If the cost per iteration is a function of the number of iterations, how do we know how many iterations to run (or what the "correct" cost is)?
+The average cost per iteration eventually levels out, as the number of iterations approaches infinity. Prior to this, the cost is dropping 
+exponentially. The "correct" cost would be the horizontal asymptote as the number of iterations increases. 
+
+
+QUESTION 2.1.4 - costs of serialization:
+Why do all of the options perform similarly for low numbers of threads?
+Low numbers of threads mean that race conditions do not happen as often, since there are simply less threads. Thus, each option does not get 
+much time to distinguish itself since the threads are simply performing the required operations.
+
+Why do the three protected operations slow down as the number of threads rises?
+With more threads, race conditions are more likely to happen and happen more often, so threads spend more time waiting for the lock. Thus, each 
+lock takes up more time to prevent data collisions.
+
+
+
+QUESTION 2.2.1 - scalability of Mutex
+Compare the variation in time per mutex-protected operation vs the number of threads in Part-1 (adds) and Part-2 (sorted lists).
+The Part-2 time grows much faster since each operation is more expensive for lists than the simple add.
+
+Comment on the general shapes of the curves, and explain why they have this shape.
+The curves appear to be linearly increasing, which makes sense since additional threads will result in more race conditions, which results in 
+more time spent in lock contention. Upon closer analysis of the axes, one could even argue that the growth is exponential since the x-axis is only 
+being doubled whereas the y-axis increases by factors of 10, so a linear graph with these axes would appear exponential on a one-to-one axes graph.
+
+Comment on the relative rates of increase and differences in the shapes of the curves, and offer an explanation for these differences.
+The sorted list graph grows much more quickly than the adds graph. An explanation for these differences is that each "operation" for the list involves 
+many operations such as searching and re-linking and deleting, whereas the add operation is much closer to just one operation. Thus, since each operation 
+is slower for the lists, the threads spend more time waiting for the lock than the threads for the add program.
+
+
+
+QUESTION 2.2.2 - scalability of spin locks
+Compare the variation in time per protected operation vs the number of threads for list operations protected by Mutex vs Spin locks. Comment on the general shapes of the curves, and explain why they have this shape.
+Similar to the question above, the curves appear to be linearly increasing (or exponentially increasing based on adjustment of axes). However, the spin lock 
+graph spends much more time per operation and has a higher cost than the mutex graph.
+
+Comment on the relative rates of increase and differences in the shapes of the curves, and offer an explanation for these differences.
+The rate of increase for the spin lock graph is definitely more than the rate of increase for the mutex graph. An explanation for these differences is that 
+spin locks and mutex perform relatively similarly for small number of threads since less threads have to wait in spin lock. However, as the number of threads 
+increases more threads are forced to wait in spin lock, continuously checking for the lock, whereas the mutex lock causes the other threads to simply sleep 
+until they can obtain the lock. Thus, additional CPU cycles are burnt as threads wait in spin lock, increasing the overall time and cost per operation, when 
+compared to mutex.
