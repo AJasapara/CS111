@@ -1,0 +1,184 @@
+Total: 269 samples
+     220  81.8%  81.8%      269 100.0% listRedirect
+      35  13.0%  94.8%       35  13.0% __strcmp_sse42
+       8   3.0%  97.8%       26   9.7% SortedList_insert
+       3   1.1%  98.9%       23   8.6% SortedList_lookup
+       3   1.1% 100.0%        3   1.1% _init
+       0   0.0% 100.0%      269 100.0% __clone
+       0   0.0% 100.0%      269 100.0% start_thread
+ROUTINE ====================== listRedirect in /u/cs/ugrad/arpit/Desktop/CS111/P2B/lab2_list.c
+   220    269 Total samples (flat / cumulative)
+     .      .   27: void segFaultHandler(int signum){
+     .      .   28: 	fprintf(stderr,"ERROR %d: %s\n", signum, strerror(errno));
+     .      .   29: 	exit(2);
+     .      .   30: }
+     .      .   31: 
+---
+     .      .   32: void* listRedirect(void* threadID) {
+     .      .   33: 	struct timespec beginThread, endThread;
+     .      .   34: 	int id = *((int*)threadID);
+     .      .   35: 	for (int j = 0; j < iterations; j++){
+     .      .   36: 		int hash = abs((int) *arr[id][j].key) % numLists;
+     .      .   37: 		if (m) {		
+     .      .   38: 			clock_gettime(CLOCK_MONOTONIC, &beginThread);
+     .      .   39: 			pthread_mutex_lock(&pmt[hash]);
+     .      .   40: 			clock_gettime(CLOCK_MONOTONIC, &endThread);
+     .      .   41: 			threadTimes[id] += (1000000000 * (endThread.tv_sec - beginThread.tv_sec)) + (endThread.tv_nsec - beginThread.tv_nsec);
+     .      .   42: 			SortedList_insert(list[hash], &arr[id][j]);
+     .      .   43: 			pthread_mutex_unlock(&pmt[hash]);
+     .      .   44: 		}
+     .      .   45: 		else if(s) {
+   158    158   46: 			while(__sync_lock_test_and_set(&spinFlag[hash], 1));
+     .     26   47: 			SortedList_insert(list[hash], &arr[id][j]);
+     .      .   48: 			__sync_lock_release(&spinFlag[hash]);
+     .      .   49: 		}
+     .      .   50: 		else
+     .      .   51: 			SortedList_insert(list[hash], &arr[id][j]);
+     .      .   52: 	}
+     .      .   53: 
+     .      .   54: 	int threadLen = 0;
+     .      .   55: 	if (m)	
+     .      .   56: 		for (int i = 0; i < numLists; i++){
+     .      .   57: 			clock_gettime(CLOCK_MONOTONIC, &beginThread);
+     .      .   58: 			pthread_mutex_lock(&pmt[i]);
+     .      .   59: 			clock_gettime(CLOCK_MONOTONIC, &endThread);
+     .      .   60: 			threadTimes[id] += (1000000000 * (endThread.tv_sec - beginThread.tv_sec)) + (endThread.tv_nsec - beginThread.tv_nsec);
+     .      .   61: 			threadLen += SortedList_length(list[i]);
+     .      .   62: 			pthread_mutex_unlock(&pmt[i]);	
+     .      .   63: 		}
+     .      .   64: 	else if(s) 
+     .      .   65: 		for (int i = 0; i < numLists; i++){
+     .      .   66: 			while(__sync_lock_test_and_set(&spinFlag[i], 1));
+     .      .   67: 			threadLen += SortedList_length(list[i]);
+     .      .   68: 			__sync_lock_release(&spinFlag[i]);
+     .      .   69: 		}
+     .      .   70: 	else
+     .      .   71: 		for (int i = 0; i < numLists; i++)
+     .      .   72: 			threadLen += SortedList_length(list[i]);
+     .      .   73: 
+     .      .   74: 	if (threadLen < 0) {
+     .      .   75: 		fprintf(stderr,"ERROR: %s\n", strerror(errno));
+     .      .   76: 		exit(2);
+     .      .   77: 	}
+     .      .   78: 
+     .      .   79: 	SortedListElement_t* temp;
+     .      .   80: 	for (int j = 0; j < iterations; j++){
+     .      .   81: 		int hash = abs((int) *arr[id][j].key) % numLists;
+     .      .   82: 		if (m) {
+     .      .   83: 			clock_gettime(CLOCK_MONOTONIC, &beginThread);
+     .      .   84: 			pthread_mutex_lock(&pmt[hash]);
+     .      .   85: 			clock_gettime(CLOCK_MONOTONIC, &endThread);
+     .      .   86: 			threadTimes[id] += (1000000000 * (endThread.tv_sec - beginThread.tv_sec)) + (endThread.tv_nsec - beginThread.tv_nsec);
+     .      .   87: 			temp = SortedList_lookup(list[hash], arr[id][j].key);
+     .      .   88: 			SortedList_delete(temp);
+     .      .   89: 			pthread_mutex_unlock(&pmt[hash]);
+     .      .   90: 		}
+     .      .   91: 		else if(s) {
+    62     62   92: 			while(__sync_lock_test_and_set(&spinFlag[hash], 1));
+     .     23   93: 			temp = SortedList_lookup(list[hash], arr[id][j].key);
+     .      .   94: 			SortedList_delete(temp);
+     .      .   95: 			__sync_lock_release(&spinFlag[hash]);
+     .      .   96: 		}
+     .      .   97: 		else {
+     .      .   98: 			temp = SortedList_lookup(list[hash], arr[id][j].key);
+     .      .   99: 			SortedList_delete(temp);
+     .      .  100: 		}
+     .      .  101: 
+     .      .  102: 	}
+     .      .  103: 
+     .      .  104: 	return NULL;
+     .      .  105: }
+---
+     .      .  106: 
+     .      .  107: int main(int argc, char **argv) {
+     .      .  108: 	int numThreads = 1;
+     .      .  109: 	pthread_t* threads; 
+     .      .  110: 	int* threadIDs;
+ROUTINE ====================== listRedirect in /u/cs/ugrad/arpit/Desktop/CS111/P2B/lab2_list.c
+   220    269 Total samples (flat / cumulative)
+     .      .   27: void segFaultHandler(int signum){
+     .      .   28: 	fprintf(stderr,"ERROR %d: %s\n", signum, strerror(errno));
+     .      .   29: 	exit(2);
+     .      .   30: }
+     .      .   31: 
+---
+     .      .   32: void* listRedirect(void* threadID) {
+     .      .   33: 	struct timespec beginThread, endThread;
+     .      .   34: 	int id = *((int*)threadID);
+     .      .   35: 	for (int j = 0; j < iterations; j++){
+     .      .   36: 		int hash = abs((int) *arr[id][j].key) % numLists;
+     .      .   37: 		if (m) {		
+     .      .   38: 			clock_gettime(CLOCK_MONOTONIC, &beginThread);
+     .      .   39: 			pthread_mutex_lock(&pmt[hash]);
+     .      .   40: 			clock_gettime(CLOCK_MONOTONIC, &endThread);
+     .      .   41: 			threadTimes[id] += (1000000000 * (endThread.tv_sec - beginThread.tv_sec)) + (endThread.tv_nsec - beginThread.tv_nsec);
+     .      .   42: 			SortedList_insert(list[hash], &arr[id][j]);
+     .      .   43: 			pthread_mutex_unlock(&pmt[hash]);
+     .      .   44: 		}
+     .      .   45: 		else if(s) {
+   158    158   46: 			while(__sync_lock_test_and_set(&spinFlag[hash], 1));
+     .     26   47: 			SortedList_insert(list[hash], &arr[id][j]);
+     .      .   48: 			__sync_lock_release(&spinFlag[hash]);
+     .      .   49: 		}
+     .      .   50: 		else
+     .      .   51: 			SortedList_insert(list[hash], &arr[id][j]);
+     .      .   52: 	}
+     .      .   53: 
+     .      .   54: 	int threadLen = 0;
+     .      .   55: 	if (m)	
+     .      .   56: 		for (int i = 0; i < numLists; i++){
+     .      .   57: 			clock_gettime(CLOCK_MONOTONIC, &beginThread);
+     .      .   58: 			pthread_mutex_lock(&pmt[i]);
+     .      .   59: 			clock_gettime(CLOCK_MONOTONIC, &endThread);
+     .      .   60: 			threadTimes[id] += (1000000000 * (endThread.tv_sec - beginThread.tv_sec)) + (endThread.tv_nsec - beginThread.tv_nsec);
+     .      .   61: 			threadLen += SortedList_length(list[i]);
+     .      .   62: 			pthread_mutex_unlock(&pmt[i]);	
+     .      .   63: 		}
+     .      .   64: 	else if(s) 
+     .      .   65: 		for (int i = 0; i < numLists; i++){
+     .      .   66: 			while(__sync_lock_test_and_set(&spinFlag[i], 1));
+     .      .   67: 			threadLen += SortedList_length(list[i]);
+     .      .   68: 			__sync_lock_release(&spinFlag[i]);
+     .      .   69: 		}
+     .      .   70: 	else
+     .      .   71: 		for (int i = 0; i < numLists; i++)
+     .      .   72: 			threadLen += SortedList_length(list[i]);
+     .      .   73: 
+     .      .   74: 	if (threadLen < 0) {
+     .      .   75: 		fprintf(stderr,"ERROR: %s\n", strerror(errno));
+     .      .   76: 		exit(2);
+     .      .   77: 	}
+     .      .   78: 
+     .      .   79: 	SortedListElement_t* temp;
+     .      .   80: 	for (int j = 0; j < iterations; j++){
+     .      .   81: 		int hash = abs((int) *arr[id][j].key) % numLists;
+     .      .   82: 		if (m) {
+     .      .   83: 			clock_gettime(CLOCK_MONOTONIC, &beginThread);
+     .      .   84: 			pthread_mutex_lock(&pmt[hash]);
+     .      .   85: 			clock_gettime(CLOCK_MONOTONIC, &endThread);
+     .      .   86: 			threadTimes[id] += (1000000000 * (endThread.tv_sec - beginThread.tv_sec)) + (endThread.tv_nsec - beginThread.tv_nsec);
+     .      .   87: 			temp = SortedList_lookup(list[hash], arr[id][j].key);
+     .      .   88: 			SortedList_delete(temp);
+     .      .   89: 			pthread_mutex_unlock(&pmt[hash]);
+     .      .   90: 		}
+     .      .   91: 		else if(s) {
+    62     62   92: 			while(__sync_lock_test_and_set(&spinFlag[hash], 1));
+     .     23   93: 			temp = SortedList_lookup(list[hash], arr[id][j].key);
+     .      .   94: 			SortedList_delete(temp);
+     .      .   95: 			__sync_lock_release(&spinFlag[hash]);
+     .      .   96: 		}
+     .      .   97: 		else {
+     .      .   98: 			temp = SortedList_lookup(list[hash], arr[id][j].key);
+     .      .   99: 			SortedList_delete(temp);
+     .      .  100: 		}
+     .      .  101: 
+     .      .  102: 	}
+     .      .  103: 
+     .      .  104: 	return NULL;
+     .      .  105: }
+---
+     .      .  106: 
+     .      .  107: int main(int argc, char **argv) {
+     .      .  108: 	int numThreads = 1;
+     .      .  109: 	pthread_t* threads; 
+     .      .  110: 	int* threadIDs;

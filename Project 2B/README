@@ -1,0 +1,80 @@
+NAME: Arpit Jasapara
+EMAIL: ajasapara@ucla.edu
+ID: XXXXXXXXX
+
+Included Files:
+	1. README 				- this file containing descriptions of each of the included files and brief answers to each of the questions.
+	2. Makefile 			- has build (default) option to build source modules, tests option to run over 200 tests, graphs option to graph 
+							the data, profile option to run the gprofiler, dist option to create the tarball, and clean to delete all programs
+							and output created by the Makefile
+	3. profile.out 			- execution profiling report showing where time was spent in the un-partitioned spin-lock implementation.
+	4. SortedList.h 		- a header file describing the interfaces for linked list operations.
+	5. SortedList.c 		- a C module that implements insert, delete, lookup, and length methods for a sorted doubly linked list
+	6. lab2_list.c 			-  the source for a C program that compiles cleanly (with no errors or warnings), and implements the specified 
+							command line options (--threads, --iterations, --yield, --sync, --lists), drives one or more parallel threads that 
+							do operations on a shared linked list, and reports on the final list and performance.
+	7. lab2b_list.csv 		- contains all of my results for all of the tests
+	8. lab2b_1.png 			- graph that shows throughput vs. number of threads for mutex and spin-lock synchronized list operations.
+	9. lab2b_2.png 			- graph that shows mean time per mutex wait and mean time per operation for mutex-synchronized list operations.
+	10. lab2b_3.png 		- graph that shows successful iterations vs. threads for each synchronization method.
+	11. lab2b_4.png 		- graph that shows throughput vs. number of threads for mutex synchronized partitioned lists.
+	12. lab2b_5.png 		- graph that shows throughput vs. number of threads for spin-lock-synchronized partitioned lists.
+	13. lab2_list.gp 		- generates the necessary graphs from lab2_list.csv
+
+
+
+QUESTION 2.3.1 - Cycles in the basic list implementation:
+Where do you believe most of the cycles are spent in the 1 and 2-thread list tests ?
+Most of the time is probably spent in the list operations.
+
+Why do you believe these to be the most expensive parts of the code?
+These operations take a lot longer than the various code in the executable and simply checking for locks. There is no waiting involved for 
+locks (or minimal) since there are only 1 or 2 threads. Plus, context switches don't happen as much so there's little overhead from that.
+
+Where do you believe most of the time/cycles are being spent in the high-thread spin-lock tests?
+Most of the time is probably spent in the spin-lock, due to the high number of threads, as the threads keep spinning and wasting CPU cycles 
+waiting for the lock.
+
+Where do you believe most of the time/cycles are being spent in the high-thread mutex tests?
+Most of the time is probably spent on the list operations or context switches. Since mutex puts the threads to sleep, they don't burn cycles 
+waiting for the lock. The list operations take a while especially for longer lists, but on shorter lists, the context switch overhead between 
+so many threads might eat up most the CPU time.
+
+
+QUESTION 2.3.2 - Execution Profiling:
+Where (what lines of code) are consuming most of the cycles when the spin-lock version of the list exerciser is run with a large number of threads?
+The while loop that waits for the spin-lock consumes most of the cycles.
+
+Why does this operation become so expensive with large numbers of threads?
+With additional threads and just one lock, most of the threads keep spinning, waiting for the chance to get the lock. This burns CPU cycles. Also, with 
+large numbers of threads, context switches occur more frequently, and these switches might simply switch between one thread waiting to another thread waiting.
+Since there is no guarantee that the lock-holding thread will be switched into, CPU cycles are excessively burnt as the other threads simply keep checking 
+if it is their turn for the lock.
+
+QUESTION 2.3.3 - Mutex Wait Time:
+Look at the average time per operation (vs. # threads) and the average wait-for-mutex time (vs. #threads).
+Why does the average lock-wait time rise so dramatically with the number of contending threads?
+Since there are so many more threads and just one lock, all of the threads are going to contend over it, and only one will get it at a time. Thus, 
+the other threads are waiting for the lock, and increase the lock-wait time.
+
+Why does the completion time per operation rise (less dramatically) with the number of contending threads?
+Since there is increased contention from the additional threads, the time spent in contention and the overhead from context switches will be included 
+in the completion time. Thus, completion time increases as well, but not as dramatically.
+
+How is it possible for the wait time per operation to go up faster (or higher) than the completion time per operation?
+The completion time is based on the completion of the entire operation, and does not take into account parallelism. The wait time on the other hand, is 
+based per thread, and the threads may run in parallel so there's additional time being spent waiting. The overlap between waiting times makes it increase 
+more dramatically than the completion time.
+
+QUESTION 2.3.4 - Performance of Partitioned Lists
+Explain the change in performance of the synchronized methods as a function of the number of lists.
+The number of lists corresponds to the number of locks, so less threads will fight over the same lock. Moreover, additional lists decreases the length 
+of each list, so contention is further reduced and parallelism increases.
+
+Should the throughput continue increasing as the number of lists is further increased? If not, explain why not.
+No, because there will be a point of saturation where contention is nearly 0. Increasing the number of lists after this would just increase the overhead of 
+maintaining additional lists/locks with no real benefit since there is virtually no lock contention anyway.
+
+It seems reasonable to suggest the throughput of an N-way partitioned list should be equivalent to the throughput of a single list with fewer (1/N) threads. Does this appear to be true in the above curves? If not, explain why not.
+No, because partitioning also decreases the chance for contention due to its smaller length. Each list will only be a fraction of the entire list, so less time 
+is spent in that critical section, and likelihood of contention decreases.
