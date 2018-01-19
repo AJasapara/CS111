@@ -259,6 +259,6 @@ graphs:
 	./lab2_add.gp
 	./lab2_list.gp 
 clean:
-	rm -f lab2a-504742401.tar.gz lab2_add lab2_list *.png *.csv
+	rm -f lab2a-XXXXXXXXX.tar.gz lab2_add lab2_list *.png *.csv
 dist:
-	tar -czf lab2a-504742401.tar.gz README Makefile lab2_add.c SortedList.h SortedList.c lab2_list.c *.csv *.gp *.png
+	tar -czf lab2a-XXXXXXXXX.tar.gz README Makefile lab2_add.c SortedList.h SortedList.c lab2_list.c *.csv *.gp *.png
