@@ -13,6 +13,6 @@ client:
 server:
 	gcc --save-temps -g -Wall -Wextra -o lab1b-server lab1b-server.c -lmcrypt
 clean:
-	rm -f lab1b-server lab1b-client lab1b-504742401.tar.gz
+	rm -f lab1b-server lab1b-client lab1b-XXXXXXXXX.tar.gz
 dist:
-	tar -czf lab1b-504742401.tar.gz lab1b-client.c lab1b-server.c Makefile README my.key
+	tar -czf lab1b-XXXXXXXXX.tar.gz lab1b-client.c lab1b-server.c Makefile README my.key
