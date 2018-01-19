@@ -7,7 +7,7 @@
 default: 
 	gcc -g -Wall -Wextra -o lab0 lab0.c
 clean:
-	rm -f lab0 lab0-504742401.tar.gz
+	rm -f lab0 lab0-XXXXXXXXX.tar.gz
 check:
 	echo "test" > testIn.txt
 	./lab0 --input=testIn.txt --output=testOut.txt
@@ -46,4 +46,4 @@ check:
 	fi
 	echo "All tests passed successfully"
 dist:
-	tar -czf lab0-504742401.tar.gz lab0.c backtrace.png breakpoint.png Makefile README
+	tar -czf lab0-XXXXXXXXX.tar.gz lab0.c backtrace.png breakpoint.png Makefile README
