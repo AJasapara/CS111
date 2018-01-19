@@ -131,6 +131,6 @@ tests:
 graphs:
 	./lab2_list.gp 
 clean:
-	rm -f lab2b-504742401.tar.gz lab2_list
+	rm -f lab2b-XXXXXXXXX.tar.gz lab2_list
 dist: build tests graphs
-	tar -czf lab2b-504742401.tar.gz README Makefile SortedList.h SortedList.c lab2_list.c lab2b_list.csv lab2_list.gp profile.out *.png
+	tar -czf lab2b-XXXXXXXXX.tar.gz README Makefile SortedList.h SortedList.c lab2_list.c lab2b_list.csv lab2_list.gp profile.out *.png
