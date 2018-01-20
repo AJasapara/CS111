@@ -1,0 +1,12 @@
+NAME: Arpit Jasapara
+EMAIL: ajasapara@ucla.edu
+ID: XXXXXXXXX
+
+Included Files:
+	1. lab3b.py - 			Contains the source code for analyzing a file system summary and reporting on all discovered inconsistencies.
+	2. Makefile - 			make (default) compiles the source code into the executable called lab3b, make clean removes all files 
+							created by the Makefile, and make dist creates the deliverable tarball.
+	3. README - 			This file containing the project description and other comments.
+
+For this project, I heavily referenced the Linux manual on man7.org for the various functions/commands that 
+were specified in the spec.
