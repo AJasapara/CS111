@@ -1,0 +1,15 @@
+NAME: Arpit Jasapara
+EMAIL: ajasapara@ucla.edu
+ID: XXXXXXXXX
+
+Serial Number: BBGW16062874
+WiFi MAC address: 2c:f7:f1:06:54:f4
+
+Included Files:
+	1. my_beaglebone.jpg 	- a selfie of me holding my assembled Beaglebone (showing the chip).
+	2. connected.png 		- a screen shot from a USB terminal command session connected to my system, showing that I gave it a name and configured
+							network access.
+	3. copy.png				- a screen shot from a local session in which I copy a hello world program from my laptop to my Beaglebone.
+	4. build_run.png		- a screen shot from a WIFI SSH session in which I build and run a trivial (hello world) program.
+	5. git.png				- a screen shot from a WIFI SSH session in which I install git and clone a repository.
+	6. README				- this file containing the serial number of my Beaglebone and the WiFi MAC address, and a description of the above files.
