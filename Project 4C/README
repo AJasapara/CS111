@@ -1,0 +1,15 @@
+NAME: Arpit Jasapara
+EMAIL: ajasapara@ucla.edu
+ID: XXXXXXXXX
+
+Included Files:
+	1. lab4c_tcp.c - 		Contains the source code for reading temperature from a Beaglebone and Grove Temperature Sensor, accepting 
+							commands from the TCP server connection, and outputting the temperature reports to the server and a log file.
+	2. lab4c_tls.c -		Contains the source code for reading temperature from a Beaglebone and Grove Temperature Sensor, accepting 
+							commands securely from the TLS server connection, and outputting the temperature reports securely to the server and a log file.
+	3. Makefile - 			make (default) compiles the source code into executables called lab4c_tcp and lab4c_tls, make clean removes all files 
+							created by the Makefile, and make dist creates the deliverable tarball.
+	4. README - 			This file containing the project description and other comments.
+
+For this project, I heavily referenced the Linux manual on man7.org for the various functions/commands that 
+were specified in the spec.
