@@ -1,0 +1,14 @@
+NAME: Arpit Jasapara
+EMAIL: ajasapara@ucla.edu
+ID: XXXXXXXXX
+
+Included Files:
+	1. lab3a.c 	- 			Contains the source code for summarizing an EXT2 image with a superblock summary, group summary, free 
+							block entries, free I-node entries, I-node summary, directory entries, and indirect block references.
+	2. Makefile - 			make (default) compiles the source code into the executable called lab3a, make clean removes all files 
+							created by the Makefile, and make dist creates the deliverable tarball.
+	3. README - 			This file containing the project description and other comments.
+	4. ext2_fs.h -			The given header file containing various structs and variables to represent an EXT2 filesystem.
+
+For this project, I heavily referenced the Linux manual on man7.org for the various functions/commands that 
+were specified in the spec.
